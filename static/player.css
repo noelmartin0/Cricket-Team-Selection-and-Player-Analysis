@@ -1,0 +1,119 @@
+*{
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  margin: 0;
+  color: white;
+}
+a{
+  text-decoration: none;
+}
+.animated-background{
+  background: linear-gradient(-167deg, rgba(2,0,36,1) 0%, rgba(0,0,0,1) 36%, rgba(127,0,154,1) 100%);
+  animation: gradient-animation 8s ease infinite;
+  background-size: 180% 180%;
+}
+
+::-webkit-scrollbar{
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3a044a;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #060505;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body{
+  margin: 0; 
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+}
+
+#heading{
+  font-weight:  600;
+  font-size: 4em;
+}
+
+.container-fluid{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  padding-top: 10vh;
+}
+
+.content{
+  display: flex;
+  flex-direction: row;
+  gap: 90px;
+}
+img{
+  width: 285.8px;
+  height: 347.7px;
+}
+
+.box{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 28px;
+  padding-top: 30px;
+}
+
+select {
+  background-color: #00000000;
+  padding: 3px;
+  border-radius: 20px;
+  font-size: 20px;
+  width: 120px;
+}
+
+option{
+  background-color: #000000;
+  padding-top: 10px;
+  font-size: 20px;
+}
+
+input{
+  background-color: #00000000;
+  -webkit-appearance: none;
+  border-color: #fff;
+  border-width: 0.01px;
+  border-radius: 25px;
+  padding: 5px;
+  font-size: 20px;
+  text-align: center;
+  width: 100px;
+}
+
+label {
+  font-weight: bold;
+}
+
+#result{
+  font-weight: normal;
+}
+
+.accent{
+  font-weight: bold;
+  background: radial-gradient(100% 100% at 100% 0, #0b2097 0, #6d08ca 100%); 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <title>Number Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='team.css') }}">
+    
+    <!-- Your CSS styles here -->
+   
+</head>
+<body class="animated-background">
+    <div class="playerHeading">
+        <h1>Team <span class="accent">Analysis</span></h1>
+    </div>
+
+    <section id="playersSection">
+        <!-- Player sections will be dynamically added here -->
+    </section>
+
+    <div>
+        <label for="aggressive">Number of Aggressive Players:</label>
+        <input type="number" id="aggressive" min="0">
+    </div>
+    <div>
+        <label for="consistent">Number of Consistent Players:</label>
+        <input type="number" id="consistent" min="0">
+    </div>
+    <div>
+        <label for="defensive">Number of Defensive Players:</label>
+        <input type="number" id="defensive" min="0">
+    </div>
+    <button id="submitPlayersButton">Submit</button>
+
+    <div id="playerNames"></div>
+
+    <script>
+        // Arrays to hold different types of players
+        let aggressivePlayers = [];
+        let consistentPlayers = [];
+        let defensivePlayers = [];
+
+        // Function to create player section
+        function createPlayerSection(playerNumber) {
+    const section = document.createElement('div');
+    section.innerHTML = `
+        <div>
+            <table class="borderless-table">
+                <tr>
+                    <td class="player-no">Player #${playerNumber}</td>
+                    <td>
+                        <form id="formatSelectionForm${playerNumber}">
+                            <select id="formatSelect${playerNumber}">
+                                <option value="t20">T20</option>
+                                <option value="odi">ODI</option>
+                                <option value="test">Test</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td>
+                        <form id="calculatorForm${playerNumber}" name="search">
+                            <input type="number" id="inputNumber${playerNumber}" class="input" placeholder="Enter the strike rate">
+                            <button type="submit" id="srbtn${playerNumber}" style="display: none;">Submit strike rate</button>
+                        </form>
+                        <i class="fas fa-search"></i>
+                    </td>
+                    <td id="result${playerNumber}"></td>
+                </tr>
+            </table>
+        </div>
+    `;
+    return section;
+}
+
+
+        // Add player sections
+        const playersSection = document.getElementById('playersSection');
+        for (let i = 1; i <= 10; i++) {
+            const playerSection = createPlayerSection(i);
+            playersSection.appendChild(playerSection);
+        }
+
+        // Function to classify players
+        function classifyPlayers(strikeRate, result, playerNumber) {
+    if (result === 'Aggressive Player') {
+        aggressivePlayers.push({ playerNumber: playerNumber, strikeRate: strikeRate });
+    } else if (result === 'Consistent Player') {
+        consistentPlayers.push({ playerNumber: playerNumber, strikeRate: strikeRate });
+    } else {
+        defensivePlayers.push({ playerNumber: playerNumber, strikeRate: strikeRate });
+    }
+}
+
+        // Add event listeners
+        for (let i = 1; i <= 10; i++) {
+            const formatSelectionForm = document.getElementById(`formatSelectionForm${i}`);
+            const calculatorForm = document.getElementById(`calculatorForm${i}`);
+
+            formatSelectionForm.addEventListener("change", function () {
+                const selectedFormat = document.getElementById(`formatSelect${i}`).value;
+                calculatorForm.action = `/calculate_${selectedFormat}`;
+                document.getElementById(`result${i}`).textContent = "";
+            });
+
+            calculatorForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const strikeRate = parseInt(document.getElementById(`inputNumber${i}`).value);
+                const selectedFormat = document.getElementById(`formatSelect${i}`).value;
+
+                fetch(`/calculate_${selectedFormat}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ number: strikeRate })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById(`result${i}`).textContent = data.result;
+                    // Classify the player
+                    classifyPlayers(strikeRate, data.result,i);
+                    if (i === 10) {
+                aggressivePlayers.sort((a, b) => b.strikeRate - a.strikeRate);
+                consistentPlayers.sort((a, b) => b.strikeRate - a.strikeRate);
+                defensivePlayers.sort((a, b) => b.strikeRate - a.strikeRate);
+
+               
+                console.log("Aggressive Players: ", aggressivePlayers);
+                console.log("Consistent Players: ", consistentPlayers);
+                console.log("Defensive Players: ", defensivePlayers);
+                
+                    }
+                });
+            });
+        }
+        document.getElementById('submitPlayersButton').addEventListener('click', function() {
+    // Get the number of players specified in the input fields
+    const aggressiveCount = parseInt(document.getElementById('aggressive').value);
+    const consistentCount = parseInt(document.getElementById('consistent').value);
+    const defensiveCount = parseInt(document.getElementById('defensive').value);
+
+    // Display player names from corresponding arrays
+    displayPlayers('Aggressive Players', aggressivePlayers, aggressiveCount);
+    displayPlayers('Consistent Players', consistentPlayers, consistentCount);
+    displayPlayers('Defensive Players', defensivePlayers, defensiveCount);
+});
+
+// Function to display player names
+function displayPlayers(category, playersArray, count) {
+            const playerNamesDiv = document.getElementById('playerNames');
+            playerNamesDiv.innerHTML += `<p class="category">${category}:</p>`;
+            for (let i = 0; i < count; i++) {
+                if (i < playersArray.length) {
+                    playerNamesDiv.innerHTML += `<p>Player #${playersArray[i].playerNumber}</p>`;
+                } else {
+                    playerNamesDiv.innerHTML += `<p>Player ${i + 1} (No data available)</p>`;
+                }
+            }
+            playerNamesDiv.innerHTML += '<hr>'; // Add a horizontal line for separation
+        }
+
+        
+    </script>
+</body>
+</html>
